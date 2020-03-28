@@ -5,7 +5,8 @@ import csv
 mydb = mysql.connector.connect(
     host="localhost",
     user="root",
-    passwd=""
+    passwd="",
+
 )
 
 mytable = mysql.connector.connect(
@@ -13,6 +14,7 @@ mytable = mysql.connector.connect(
     user="root",
     passwd="",
     database="shop4me"
+
 )
 
 myDbCursor = mydb.cursor()
