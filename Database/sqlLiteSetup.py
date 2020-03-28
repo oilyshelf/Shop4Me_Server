@@ -1,10 +1,12 @@
+
+"""
 import _sqlite3
 import csv
 #doesnt need to be run all the changes here are safed
 conn = _sqlite3.connect('shopBase.db')
 
 curs = conn.cursor()
-"""
+
 
 curs.execute(
     "CREATE TABLE place (primary_key INT AUTO_INCREMENT , state VARCHAR(255), city VARCHAR(255), postcode INT(255), primary key (primary_key))")
