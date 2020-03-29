@@ -4,7 +4,7 @@ conn = _sqlite3.connect('shopBase.db')
 
 c = conn.cursor()
 
-def registerUser(last_name, first_name, postcode, street, house_number, password):
+def registerUser(last_name, first_name, postcode, street, house_number, password,email):
     """regestier a user into database hash password !! and return true when success else false"""
     pass
 
@@ -33,7 +33,7 @@ def getAuftrag(sessionid,auftragid):
     pass
 
 def takeErrand(sessionID, errandID):
-    """in db add to user_accepted_errand , change status from errand to one  return true or false """
+    """in db add to user_accepted_errand if errend isnt taken (status = 0), change status from errand to one  return true or false """
     pass
 
 def makeErrand(postcode,email, phone_number, notice, articleList):

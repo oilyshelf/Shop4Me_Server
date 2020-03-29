@@ -21,7 +21,7 @@ async def server(websocket, path):
 
         async for message in websocket:
             data = json.loads(message)
-            listener(data, websocket)
+            await listener(data, websocket)
 
     finally:
         await unregister(websocket)
