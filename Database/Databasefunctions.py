@@ -28,11 +28,11 @@ def getUserfromSessionID(sessionID):
             sqlFor = sql.format(sessionID)
             print(sqlFor)
             c.execute(sqlFor)
-            result = c.fetchone()
+            result = c.fetchone()[0]
     except:
         result = -1
 
-    return result #TODO return wert anpassen das das teil ja ein tupel zurückgibt
+    return result
 
 def login(email, password):
     """ check if user is in database if in db generate sesid and insert into db  return sessid if success else -1"""
@@ -43,7 +43,7 @@ def logout(sessionID):
     pass
 
 def getArtikels():
-    """return all articels as a List with dictonary {id:, name:}"""
+    """return all articels as a List with dictonary {item_id:, name:}"""
     pass
 
 def getAuftraege(sessionId,plz):
@@ -59,4 +59,5 @@ def takeErrand(sessionID, errandID):
     pass
 
 def makeErrand(postcode,email, phone_number, notice, articleList):
-    """ create an new errand with the informathion status default is 0 / articleList looks like that [{item_id, amount}] add to errand and the from article list in items_in_errand  return bool for success"""
+    """ create an new errand with the information status default is 0 / articleList looks like that [{item_id, amount}] add to errand and the from article list in items_in_errand  return bool for success"""
+    pass
