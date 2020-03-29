@@ -1,12 +1,13 @@
 import _sqlite3
-from .passwordHasher import hash_password
-conn = _sqlite3.connect('shopBase.db')
+from .passwordHasher import hash_password,verify_password
+from .SessionIDGenerator import generate_session
+conn = _sqlite3.connect('shopBaseWithExample.db')
 
 c = conn.cursor()
 
 def registerUser(last_name, first_name, postcode, street, house_number, password,email):
     """regestier a user into database hash password !! and return true when success else false"""
-    sql = """ INSERT INTO user (email, last_name, firstname,postcode, street, house_number, password) VALUES ('{}','{}','{}',{},'{}','{}','{}')"""
+    sql = """ INSERT INTO user (email, last_name, first_name,postcode, street, house_number, password) VALUES ('{}','{}','{}',{},'{}','{}','{}')"""
     hashedPw = hash_password(password)
     success = True
     try:
@@ -16,6 +17,7 @@ def registerUser(last_name, first_name, postcode, street, house_number, password
             c.execute(sqlFor)
     except:
         success = False
+
 
     return success
 
@@ -36,7 +38,31 @@ def getUserfromSessionID(sessionID):
 
 def login(email, password):
     """ check if user is in database if in db generate sesid and insert into db  return sessid if success else -1"""
-    pass
+    userInfo = None
+    sessionID = None
+    sql = """SELECT email, password, user_id FROM user WHERE email = '{}'"""
+    try:
+        with conn:
+            sqlF = sql.format(email)
+            print(sqlF)
+            c.execute(sqlF)
+            userInfo = c.fetchone()
+    except:
+        print("no such email")
+        return -1
+    if verify_password(userInfo[1],password):
+        sessionID = generate_session()
+        try:
+            with conn:
+                sql = """ INSERT INTO session VALUES ("{}", {} )"""
+                sqlF = sql.format(sessionID, userInfo[2])
+                print(sqlF)
+                c.execute(sqlF)
+        except:
+            return -1
+    else:
+        return -1
+    return sessionID
 
 def logout(sessionID):
     """ remove sesID from db return true if success else false"""
