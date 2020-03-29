@@ -1,16 +1,38 @@
 import _sqlite3
-
+from .passwordHasher import hash_password
 conn = _sqlite3.connect('shopBase.db')
 
 c = conn.cursor()
 
 def registerUser(last_name, first_name, postcode, street, house_number, password,email):
     """regestier a user into database hash password !! and return true when success else false"""
-    pass
+    sql = """ INSERT INTO user (email, last_name, firstname,postcode, street, house_number, password) VALUES ('{}','{}','{}',{},'{}','{}','{}')"""
+    hashedPw = hash_password(password)
+    success = True
+    try:
+        with conn:
+            sqlFor = sql.format(email, last_name, first_name, postcode, street, house_number, hashedPw)
+            print(sqlFor)
+            c.execute(sqlFor)
+    except:
+        success = False
 
-def getUserfromSessionID():
+    return success
+
+def getUserfromSessionID(sessionID):
     """ a function to help find the user_id from the sessionID folder"""
-    pass
+    sql = """ SELECT user_id FROM session WHERE session_id = '{}'"""
+    result = None
+    try:
+        with conn:
+            sqlFor = sql.format(sessionID)
+            print(sqlFor)
+            c.execute(sqlFor)
+            result = c.fetchone()
+    except:
+        result = -1
+
+    return result
 
 def login(email, password):
     """ check if user is in database if in db generate sesid and insert into db  return sessid if success else -1"""

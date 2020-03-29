@@ -5,9 +5,9 @@ conn = _sqlite3.connect('shopBase.db')
 
 curs = conn.cursor()
 
-
+#TODO make postcode int for bette sql queries
 curs.execute("CREATE TABLE place (primary_key INT AUTO_INCREMENT , state VARCHAR(255), city VARCHAR(255), postcode VARCHAR(255), primary key (primary_key))")
-
+#TODO delete username hab jz die ganzen listener ohne den geschrieben
 curs.execute(
     "CREATE TABLE user (user_id INT AUTO_INCREMENT , username VARCHAR(255), email VARCHAR(255), last_name VARCHAR(255), first_name VARCHAR(255), postcode VARCHAR(255), street VARCHAR(255), house_number VARCHAR(255), password VARCHAR(255), Primary key (user_id), Foreign key (postcode) References place(postcode) )")
 
