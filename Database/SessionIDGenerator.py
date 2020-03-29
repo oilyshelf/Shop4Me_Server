@@ -1,7 +1,7 @@
 import os, base64
 def generate_session():
-    return base64.b64encode(os.urandom(16))
+    return str(base64.b64encode(os.urandom(16))).replace("'", "")
 
 
 for i in range(5):
-    print(type(generate_session()))
+    print(generate_session())
