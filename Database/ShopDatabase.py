@@ -46,7 +46,7 @@ except Exception as CantCreateTableErr:
 
 # read places.csv
 
-with open("places.csv", newline='', encoding='utf-8-sig') as csvfile:
+"""with open("places.csv", newline='', encoding='utf-8-sig') as csvfile:
 
     readCSV = csv.reader(csvfile, delimiter=';')
 
@@ -82,6 +82,7 @@ try:
 
 except Exception as fillTablePlacesErr:
     print('fillTablePlacesErr: ', fillTablePlacesErr)
+"""
 
 mytable.commit()
 
