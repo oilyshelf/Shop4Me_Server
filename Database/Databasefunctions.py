@@ -32,7 +32,7 @@ def getUserfromSessionID(sessionID):
     except:
         result = -1
 
-    return result
+    return result #TODO return wert anpassen das das teil ja ein tupel zurückgibt
 
 def login(email, password):
     """ check if user is in database if in db generate sesid and insert into db  return sessid if success else -1"""
