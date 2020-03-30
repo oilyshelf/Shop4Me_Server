@@ -1,6 +1,7 @@
 import _sqlite3
 from .passwordHasher import hash_password, verify_password
 from .SessionIDGenerator import generate_session
+from datetime import datetime
 
 conn = _sqlite3.connect('shopBaseWithExample.db')
 
@@ -106,7 +107,7 @@ def getArtikels():
                     artikelz.append({"item_id": ass[0], "item_name": ass[1]})
 
                 print(artikelz)
-                return list
+                return artikelz
 
             else:
                 return -1
@@ -117,19 +118,130 @@ def getArtikels():
 
 def getAuftraege(sessionId, plz):
     """check if plz is -1 if -1 return all auftraege assoziated with that user else all auftrege in that plz  return type: list with dictonary {errandid, postcode} else -1"""
-    pass
+    userID = getUserfromSessionID(sessionId)
+    errand = None
+    if userID != -1:
+        if plz == -1:
+            sql = """SELECT errand_id, postcode FROM errand NATURAL JOIN user_accepted_errand  WHERE user_id = {}"""
+            try:
+                with conn:
+                    sqlF = sql.format(userID)
+                    print(sqlF)
+                    c.execute(sqlF)
+                    errand = c.fetchall()
+            except Exception as myErrandEXP:
+                print(myErrandEXP)
+                return -1
+        else:
+            sql = """ SELECT errand_id, postcode FROM errand WHERE postcode = '{}' and status = 0 """
+            try:
+                with conn:
+                    sqlF = sql.format(plz)
+                    print(sqlF)
+                    c.execute(sqlF)
+                    errand = c.fetchall()
+            except Exception as ErrandPostcodeEXP:
+                print(ErrandPostcodeEXP)
+                return -1
+    else:
+        return -1
+    result = []
+    if errand is not None:
+        for ers in errand:
+            result.append({"errand_id": ers[0], "postcode": ers[1]})
+        return result
+    else:
+        return -1
 
 
-def getAuftrag(sessionid, auftragid):
+def getAuftrag(sessionid, errend_id):
     """get all the information from that errand as a dictonary"""
-    pass
+    userID = getUserfromSessionID(sessionid)
+    res = {}
+    if userID != -1:
+        sql = """ SELECT * FROM errand WHERE errand_id = {}"""
+        try:
+            with conn:
+                sqlF = sql.format(errend_id)
+                print(sqlF)
+                c.execute(sqlF)
+                temp = c.fetchone()
+                sql = """Select amount, item_name, item_id FROM item NATURAL JOIN items_in_errand WHERE errand_id = """ + str(
+                    temp[0])
+                c.execute(sql)
+                tempList = c.fetchall()
+        except Exception as getItemEXP:
+            print(getItemEXP)
+    else:
+        return -1
+    res["errand_id"] = temp[0]
+    res["status"] = temp[1]
+    res["startDate"] = temp[2]
+    res["endDate"] = temp[3]
+    res["postcode"] = temp[4]
+    res["email"] = temp[5]
+    res["phone_number"] = temp[6]
+    res["notice"] = temp[7]
+    resList = []
+    if tempList is not None:
+        for item in tempList:
+            resList.append({"amount": item[0], "item_id": item[2], "item_name": item[1]})
+    res["itemList"] = resList
+    return res
 
 
 def takeErrand(sessionID, errandID):
     """in db add to user_accepted_errand if errend isnt taken (status = 0), change status from errand to one  return true or false """
-    pass
+    userID = getUserfromSessionID(sessionID)
+    if userID != -1:
+        try:
+            with conn:
+                sql = """SELECT status from errand WHERE errand_id = """ + str(errandID)
+                print(sql)
+                c.execute(sql)
+                temp = c.fetchone()[0]
+                if temp == 0:
+                    sql = """ UPDATE errand SET status = 1 WHERE errand_id = """ + str(errandID)
+                    c.execute(sql)
+                    sql = """ INSERT INTO user_accepted_errand VALUES ({}, {})"""
+                    sqlF = sql.format(userID, errandID)
+                    print(sqlF)
+                    c.execute(sqlF)
+                else:
+                    return False
+        except Exception as takeErrandEXP:
+            print(takeErrandEXP)
+            return False
+    return True
 
 
 def makeErrand(postcode, email, phone_number, notice, articleList):
     """ create an new errand with the information status default is 0 / articleList looks like that [{item_id, amount}] add to errand and the from article list in items_in_errand  return bool for success"""
-    pass
+    tempnotice = generate_session()
+    date = datetime.now().strftime("%Y-%m-%d")
+    sqlcreate = """ INSERT INTO errand (startDate, postcode, email, phone_number,notice) VALUES ('{}', {} ,'{}','{}', '{}') """
+    try:
+        with conn:
+            sqlF = sqlcreate.format(date,postcode,email,phone_number,tempnotice)
+            print(sqlF)
+            c.execute(sqlF)
+            sql = """ SELECT errand_id FROM errand WHERE notice = '"""+tempnotice + "'"
+            print(tempnotice)
+            print(sql)
+            c.execute(sql)
+            errand_id = c.fetchone()[0]
+            sql = """ UPDATE errand SET notice =  '{}' WHERE errand_id = '{}' """
+            sqlF = sql.format(notice,errand_id)
+            print(sqlF)
+            c.execute(sqlF)
+            sql = """INSERT INTO items_in_errand VALUES ({}, {}, {})"""
+            for item in articleList:
+                sqlF = sql.format(item["item_id"], item["amount"], errand_id)
+                print(sqlF)
+                c.execute(sqlF)
+            return True
+    except Exception as makeEXp:
+        print(makeEXp)
+        return False
+
+

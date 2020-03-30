@@ -1,4 +1,4 @@
-"""import asyncio
+import asyncio
 import json
 import websockets
 from Listener import listener
@@ -30,5 +30,5 @@ async def server(websocket, path):
 start_server = websockets.serve(server, "localhost", 6789)
 
 asyncio.get_event_loop().run_until_complete(start_server)
-asyncio.get_event_loop().run_forever()"""
+asyncio.get_event_loop().run_forever()
 

@@ -12,6 +12,7 @@ async def notify_one(websocket, message):
 
 
 async def listener(dict, websocket):
+    print(dict)
     if dict["action"] == "login":
         await loginLis(websocket, dict["email"], dict["password"])
     elif dict["action"] == "register":
@@ -62,7 +63,9 @@ async def logoutLis(websocket, sessionID):
 
 
 async def getItemsLis(websocket):
-    await websocket.send(json.dumps({"action": "getItems", "items": Database.getArtikels()}))
+    list = Database.getArtikels()
+    print(list)
+    await websocket.send(json.dumps({"action": "getItems", "items":list}))
 
 
 async def getErrendsLis(websocket, plz, sessionID):

@@ -21,7 +21,7 @@ curs.execute(
     "CREATE TABLE session (session_id VARCHAR(255), user_id INTEGER(255),primary key (session_id), FOREIGN KEY(user_id) REFERENCES user(user_id))")
 
 
-with open("./Database/places.csv", newline='', encoding='utf-8-sig') as csvfile:
+with open("Database/places.csv", newline='', encoding='utf-8-sig') as csvfile:
 
     readCSV = csv.reader(csvfile, delimiter=';')
 
@@ -52,7 +52,7 @@ for x in range(0, len(primary_key)):
     print(temp)
     curs.execute(temp)
 
-with open("./Database/itemlist.csv", newline='', encoding='utf-8-sig') as csvfile1:
+with open("Database/itemlist.csv", newline='', encoding='utf-8-sig') as csvfile1:
 
     readCSV = csv.reader(csvfile1, delimiter=';')
 
